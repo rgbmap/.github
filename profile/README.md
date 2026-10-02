@@ -165,4 +165,4 @@ Grouped by task, at [rgbmap.org/docs](https://rgbmap.org/docs).
 | [Check a claim](https://rgbmap.org/docs/verification) | The eight checks, where the bytes come from, and what a passing result does not mean |
 | [SDK](https://rgbmap.org/docs/sdk-javascript) | JavaScript and Rust, one set of test vectors |
 
-<sub>contact@rgbmap.org</sub>
+<sub>core@rgbmap.org</sub>
