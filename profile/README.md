@@ -58,13 +58,10 @@ reader's choice, and it is what lights the cells.
 | **Assets** | Contract id, protocol version, schema, name, ticker, precision, issuer signature, media digests | Who and what is this asset |
 | **Collections** | A declared size, and which items actually claimed a place in it | Which items belong to one declared set, and who says so |
 | **Transfers** | Every transfer output published consignments prove, each naming its proof on Arweave | What moved, and where is the file that proves it |
-| **Ledgers** | The public segment of a publisher's ledger, and reserve snapshots | Does what this platform wrote add up, and has it been rewritten |
 | **Verification** | A published procedure and an open checker, reading only the archive and bitcoin | Without asking anyone, do you reach the same conclusion |
 
 Registration is a declaration the issuer signs and publishes to Arweave; the index finds it on
-the public gateways, verifies the signature, and compares it with what else it holds. A
-platform can go further and connect its own ledger, committed to bitcoin once a day — a
-commitment fixes the position, the time and the order of everything written before it.
+the public gateways, verifies the signature, and compares it with what else it holds.
 
 ## What it never does
 
@@ -74,8 +71,7 @@ commitment fixes the position, the time and the order of everything written befo
 | **It does not merge** | Every status stands on its own. There is no combined "verified" mark, and no `isValid` in either SDK |
 | **It does not approve** | Nobody reviews a registration, and nothing is gated |
 | **It does not delist** | An asset that is reported, disputed or clashing with another stays visible, with the conflict shown |
-| **It does not hold funds** | An indexed ledger belongs to a custodial platform. Anchoring proves what was written; it does not make the assets non-custodial |
-| **It does not promote** | No integrator is advertised here. A publisher's or an issuer's name appears as the attribution of a specific record, never in a heading, a list or a recommendation |
+| **It does not promote** | No integrator is advertised here. An issuer's name appears as the attribution of a specific record, never in a heading, a list or a recommendation |
 | **It does not know who is reading** | No account, no session, no wallet address is recorded |
 
 ## How the pieces fit
@@ -84,46 +80,22 @@ commitment fixes the position, the time and the order of everything written befo
 flowchart LR
   I["Issuer<br/>signs a declaration"] --> A
   H["Holder<br/>publishes a consignment"] --> A
-  P["Publisher<br/>exposes its public ledger"] --> A
   A["RGBMap<br/>fetches, hashes, copies"] --> O["Objects<br/>data.rgbmap.org"]
   A --> X["Index<br/>api.rgbmap.org"]
   A --> W["Arweave<br/>permanent copy"]
-  B["Bitcoin<br/>the publisher's commitment"] --> A
   O --> R["Wallet · market · verifier<br/>recomputes what it reads"]
   X --> R
   W --> R
-  B --> R
 ```
 
-Nothing here is the source of the data. A publisher runs its own ledger and exposes it read
-only; RGBMap copies, hashes and serves what that interface already states. There is no
-privileged channel: whatever a publisher does not publish is not indexed either.
+Nothing here is the source of the data. RGBMap copies, hashes and serves what issuers and
+holders already published. There is no privileged channel: whatever is not published is not
+indexed either.
 
 ## Check it yourself
 
 The index is not the source of truth: where an index and a recomputation disagree, the
-recomputation wins. The procedure is published, and so is a checker that runs it against the
-archive and one bitcoin interface.
-
-```sh
-cargo install rgbmap-verify
-
-rgbmap-verify \
-  --objects https://data.rgbmap.org \
-  --index https://api.rgbmap.org \
-  --publisher <network>:<genesis record hash> \
-  --bitcoin https://mempool.space/signet/api
-```
-
-```text
-4 objects named: 1 ledger shards, 2 snapshots
-  ✓ 3 objects fetched from https://data.rgbmap.org and hashed
-  ✓ 1 shards, continuous through #96
-  ✓ 96 records recompute from the genesis record, 2 of them opened in full
-  ✓ 2 anchors carry their commitment on bitcoin
-```
-
-The same eight checks are in the SDK.
+recomputation wins. The procedure is published, and so are the primitives that run it.
 
 ```sh
 npm install @rgb-map/sdk          # JavaScript
@@ -138,9 +110,6 @@ const rgbmap = client({ network: 'mainnet' })
 const asset = await rgbmap.resolve('rgb:…')
 asset.status.issuer_signed        // each status separately; there is no verdict
 asset.same_ticker.count           // how many other contracts carry this ticker
-
-const page = await rgbmap.ledgerChecked({ limit: 200 })
-page.problems                     // empty when everything recomputes here
 ```
 
 Asking an index about one asset at a time tells it what its user holds. A whole network's asset
@@ -161,8 +130,7 @@ Grouped by task, at [rgbmap.org/docs](https://rgbmap.org/docs).
 | [Complete the map](https://rgbmap.org/docs/asset-map) | What the colours mean, how to read a consignment privately, and how to publish it |
 | [Register an asset](https://rgbmap.org/docs/registering-an-asset) | The manifest, the signature, and the three issuer proofs |
 | [Call the API](https://rgbmap.org/docs/query-api) | The read interface, and the evidence every answer carries |
-| [Publish a ledger](https://rgbmap.org/docs/ledgers-and-anchors) | What a conforming ledger looks like, what is published, how it is anchored |
-| [Check a claim](https://rgbmap.org/docs/verification) | The eight checks, where the bytes come from, and what a passing result does not mean |
+| [Check a claim](https://rgbmap.org/docs/verification) | The checks, where the bytes come from, and what a passing result does not mean |
 | [SDK](https://rgbmap.org/docs/sdk-javascript) | JavaScript and Rust, one set of test vectors |
 
 <sub>core@rgbmap.org</sub>
